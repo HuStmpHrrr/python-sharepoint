@@ -272,6 +272,18 @@ class URLField(Field):
 class ChoiceField(Field):
     type_name = 'choice'
 
+    def __init__(self, lst, lst_id, xml):
+        super(ChoiceField, self).__init__(lst, lst_id, xml)
+        try:
+            self.default_value = [c for c in xml.iterchildren() if c.tag.endswith('Default')][0].text
+        except: pass
+        choices = [c for c in xml.iterchildren() if c.tag.endswith('CHOICES')][0]
+        self._choices = [c.text for c in choices]
+
+    @property
+    def choices(self):
+        return self._choices
+
     def _parse(self, value):
         return value
     def _unparse(self, value):
